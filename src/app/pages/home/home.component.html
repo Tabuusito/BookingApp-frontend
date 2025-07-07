@@ -1,0 +1,20 @@
+<div class="container home-container">
+  <div class="home-header">
+    <h1>Panel de Control</h1>
+    <button (click)="logout()" class="btn btn-link">Cerrar Sesión</button>
+  </div>
+
+  <p class="welcome-message">Hola, {{ userName }}</p>
+
+  <button class="btn btn-secondary">Crear Nueva Reserva/Cita</button>
+
+  <div class="placeholder-section" style="margin-top: 30px;">
+    <h4>Próximas Reservas</h4>
+    <p>Aquí se mostrarán tus próximas reservas.</p>
+  </div>
+
+  <div class="placeholder-section">
+    <h4>Historial de Reservas</h4>
+    <p>Aquí se mostrará tu historial de reservas.</p>
+  </div>
+</div>
