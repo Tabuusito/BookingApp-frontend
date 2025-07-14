@@ -1,0 +1,57 @@
+<div class="container detail-container">
+  
+  <div *ngIf="isLoading" class="loading-spinner">Cargando detalles de la reserva...</div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Usamos el pipe 'async' para suscribirnos automáticamente al observable 'reservation$' -->
+  <ng-container *ngIf="(reservation$ | async) as reservation; else noReservation">
+    <div class="card">
+      <div class="card-header" [ngClass]="'status-' + reservation.status.toLowerCase()">
+        <h2>Detalles de la Reserva</h2>
+        <span class="status-badge">{{ reservation.status }}</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-item">
+          <span class="label">ID de Reserva:</span>
+          <span class="value">#{{ reservation.reservationId }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Servicio:</span>
+          <span class="value">{{ reservation.serviceName }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Fecha:</span>
+          <span class="value">{{ reservation.startTime | date:'fullDate' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Horario:</span>
+          <span class="value">{{ reservation.startTime | date:'shortTime' }} - {{ reservation.endTime | date:'shortTime' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Precio:</span>
+          <span class="value">{{ reservation.price | currency:'EUR' }}</span>
+        </div>
+        <div class="detail-item notes" *ngIf="reservation.notes">
+          <span class="label">Notas:</span>
+          <p class="value">{{ reservation.notes }}</p>
+        </div>
+        <div class="detail-item created-at">
+          <span class="label">Creada el:</span>
+          <span class="value">{{ reservation.createdAt | date:'medium' }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-outline-secondary" (click)="goBack()">Volver</button>
+        <a routerLink="/home" class="btn btn-primary">Ir al Panel Principal</a>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #noReservation>
+    <div *ngIf="!isLoading && !errorMessage" class="placeholder-text">
+      No se han podido cargar los datos de la reserva.
+    </div>
+  </ng-template>
+
+</div>

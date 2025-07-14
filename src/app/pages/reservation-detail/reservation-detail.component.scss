@@ -1,0 +1,95 @@
+.detail-container {
+  max-width: 700px;
+  margin: 40px auto;
+}
+
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden; // Para que el borde de color no se salga
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  background-color: var(--primary-color);
+  color: white;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+}
+
+.card-body {
+  padding: 25px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-weight: 500;
+    color: var(--text-light-color);
+  }
+
+  .value {
+    font-weight: 500;
+    color: var(--text-color);
+    text-align: right;
+  }
+}
+
+.notes {
+  flex-direction: column;
+  align-items: flex-start;
+
+  .value {
+    margin-top: 8px;
+    text-align: left;
+    white-space: pre-wrap; // respeta saltos de línea y espacios
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.created-at {
+  font-size: 0.9em;
+  color: #999;
+}
+
+.card-footer {
+  background-color: #f9f9f9;
+  padding: 15px 25px;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+// Reutilizamos los estilos de status badge
+.status-badge {
+  font-size: 0.8em;
+  padding: 5px 12px;
+  border-radius: 15px;
+  color: #fff;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.status-confirmed .status-badge { background-color: #28a745; }
+.status-pending .status-badge { background-color: #ffc107; color: #333; }
+.status-cancelled .status-badge { background-color: #6c757d; }

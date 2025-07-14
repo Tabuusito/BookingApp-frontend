@@ -1,20 +1,56 @@
 <div class="container home-container">
   <div class="home-header">
     <h1>Panel de Control</h1>
-    <button (click)="logout()" class="btn btn-link">Cerrar Sesión</button>
+    <div>
+      <!-- Botón para ir a la futura vista de calendario -->
+      <button (click)="goToCalendarView()" class="btn btn-link">Vista Calendario</button>
+      <button (click)="logout()" class="btn btn-link">Cerrar Sesión</button>
+    </div>
   </div>
 
   <p class="welcome-message">Hola, {{ userName }}</p>
 
-  <button class="btn btn-secondary">Crear Nueva Reserva/Cita</button>
+  <button (click)="goToReservationCreation()" class="btn btn-secondary">Crear Nueva Reserva/Cita</button>
 
-  <div class="placeholder-section" style="margin-top: 30px;">
-    <h4>Próximas Reservas</h4>
-    <p>Aquí se mostrarán tus próximas reservas.</p>
+  <!-- SECCIÓN DE PRÓXIMAS RESERVAS -->
+  <div class="reservations-section">
+    <h2>Próximas Reservas</h2>
+    <div *ngIf="isLoading" class="loading-spinner">Cargando...</div>
+    <div *ngIf="!isLoading && upcomingReservations.length > 0; else noUpcoming">
+      <div *ngFor="let res of upcomingReservations" class="reservation-card" [ngClass]="'status-' + res.status.toLowerCase()">
+        <div class="card-header">
+          <h3 class="service-name">{{ res.serviceName }}</h3>
+          <span class="status-badge">{{ res.status }}</span>
+        </div>
+        <div class="card-body">
+          <p><strong>Fecha:</strong> {{ res.startTime | date:'fullDate':'':'es' }}</p>
+          <p><strong>Hora:</strong> {{ res.startTime | date:'shortTime' }} - {{ res.endTime | date:'shortTime' }}</p>
+          <p *ngIf="res.price > 0"><strong>Precio:</strong> {{ res.price | currency:'EUR' }}</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-link">Ver Detalles</button>
+          <button (click)="cancelReservation(res.reservationId)" class="btn btn-link-danger">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    <ng-template #noUpcoming>
+      <p class="placeholder-text" *ngIf="!isLoading">No tienes ninguna reserva próxima.</p>
+    </ng-template>
   </div>
 
-  <div class="placeholder-section">
-    <h4>Historial de Reservas</h4>
-    <p>Aquí se mostrará tu historial de reservas.</p>
+  <!-- SECCIÓN DE HISTORIAL -->
+  <div class="reservations-section">
+    <h2>Historial de Reservas</h2>
+    <div *ngIf="!isLoading && pastReservations.length > 0; else noPast">
+       <div *ngFor="let res of pastReservations" class="reservation-card simple-card" [ngClass]="'status-' + res.status.toLowerCase()">
+         <div class="card-body">
+           <span>{{ res.startTime | date:'shortDate' }} - {{ res.serviceName }}</span>
+           <span class="status-badge">{{ res.status }}</span>
+         </div>
+      </div>
+    </div>
+     <ng-template #noPast>
+      <p class="placeholder-text" *ngIf="!isLoading">No hay reservas en tu historial.</p>
+    </ng-template>
   </div>
 </div>

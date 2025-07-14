@@ -1,0 +1,144 @@
+<div class="container calendar-container">
+  
+  <!-- Encabezado y Navegación del Calendario -->
+  <div class="row text-center calendar-header">
+    
+    <!-- Controles de Navegación (Anterior, Hoy, Siguiente) -->
+    <div class="col-md-4">
+      <div class="btn-group">
+        <div
+          class="btn btn-primary"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          <i class="bi bi-chevron-left"></i> Anterior
+        </div>
+        <div
+          class="btn btn-outline-secondary"
+          mwlCalendarToday
+          [(viewDate)]="viewDate"
+        >
+          Hoy
+        </div>
+        <div
+          class="btn btn-primary"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Siguiente <i class="bi bi-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Título del Período Actual -->
+    <div class="col-md-4">
+      <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es' }}</h3>
+    </div>
+
+    <!-- Selector de Vista (Mes, Semana, Día) -->
+    <div class="col-md-4">
+      <div class="btn-group">
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Month)"
+          [class.active]="view === CalendarView.Month"
+        >
+          Mes
+        </div>
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Week)"
+          [class.active]="view === CalendarView.Week"
+        >
+          Semana
+        </div>
+        <div
+          class="btn btn-primary"
+          (click)="setView(CalendarView.Day)"
+          [class.active]="view === CalendarView.Day"
+        >
+          Día
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+
+  <!-- Mensaje de Carga -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <p>Cargando reservas...</p>
+  </div>
+
+  <!-- Contenedor del Calendario -->
+  <div *ngIf="!isLoading" [ngSwitch]="view">
+    
+    <!-- Vista de Mes -->
+    <mwl-calendar-month-view
+      *ngSwitchCase="CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [activeDayIsOpen]="activeDayIsOpen"
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clickeado', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+      locale="es"
+    >
+    </mwl-calendar-month-view>
+
+    <!-- Vista de Semana -->
+    <mwl-calendar-week-view
+      *ngSwitchCase="CalendarView.Week"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (eventClicked)="handleEvent('Clickeado', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+      [weekStartsOn]="1"
+      locale="es"
+    >
+    </mwl-calendar-week-view>
+
+    <!-- Vista de Día -->
+    <mwl-calendar-day-view
+      *ngSwitchCase="CalendarView.Day"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (eventClicked)="handleEvent('Clickeado', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+      locale="es"
+    >
+    </mwl-calendar-day-view>
+  </div>
+
+  <!-- Botón para volver al Panel de Control -->
+  <div class="back-link">
+    <a routerLink="/home"><i class="bi bi-arrow-left-circle"></i> Volver al Panel de Control</a>
+  </div>
+</div>
+
+<!-- (Opcional) Template para un Modal de Detalles del Evento -->
+<!-- Puedes usar ng-bootstrap, Angular Material o tu propia implementación de modal -->
+<ng-template #modalContent let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title">Detalles de la Reserva</h5>
+    <button type="button" class="btn-close" (click)="close()"></button>
+  </div>
+  <div class="modal-body" *ngIf="modalData">
+    <p><strong>Servicio:</strong> {{ modalData.event.title }}</p>
+    <p><strong>Inicio:</strong> {{ modalData.event.start | date:'full':'':'es' }}</p>
+    <p><strong>Fin:</strong> {{ modalData.event.end | date:'full':'':'es' }}</p>
+    <p><strong>Estado:</strong> {{ modalData.event.meta.reservation.status }}</p>
+    <p *ngIf="modalData.event?.meta.reservation.notes">
+      <strong>Notas:</strong> {{ modalData.event.meta.reservation.notes }}
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">Cerrar</button>
+  </div>
+</ng-template>
