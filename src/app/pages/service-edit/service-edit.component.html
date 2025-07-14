@@ -1,0 +1,66 @@
+<div class="container service-create-container">
+  <h2>Editar Servicio</h2>
+  <p class="subtitle">Define los detalles del servicio que quieres ofrecer.</p>
+
+  <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+
+    <!-- Nombre del Servicio -->
+    <div class="form-group">
+      <label for="name">Nombre del Servicio</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <div *ngIf="f['name'].invalid && f['name'].touched" class="error-message">
+        <span *ngIf="f['name'].errors?.['required']">El nombre es requerido.</span>
+        <span *ngIf="f['name'].errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-group">
+      <label for="description">Descripción (Opcional)</label>
+      <textarea id="description" class="form-control" formControlName="description" rows="4"></textarea>
+    </div>
+
+    <!-- Fila para Duración y Precio -->
+    <div class="form-row">
+      <!-- Duración en Minutos -->
+      <div class="form-group">
+        <label for="duration">Duración (en minutos)</label>
+        <input type="number" id="duration" class="form-control" formControlName="durationMinutes">
+        <div *ngIf="f['durationMinutes'].invalid && f['durationMinutes'].touched" class="error-message">
+          <span *ngIf="f['durationMinutes'].errors?.['required']">La duración es requerida.</span>
+          <span *ngIf="f['durationMinutes'].errors?.['min']">La duración debe ser al menos 1 minuto.</span>
+        </div>
+      </div>
+
+      <!-- Precio por Reserva -->
+      <div class="form-group">
+        <label for="price">Precio por Reserva (€)</label>
+        <input type="number" id="price" class="form-control" formControlName="pricePerReservation">
+        <div *ngIf="f['pricePerReservation'].invalid && f['pricePerReservation'].touched" class="error-message">
+          <span *ngIf="f['pricePerReservation'].errors?.['required']">El precio es requerido.</span>
+          <span *ngIf="f['pricePerReservation'].errors?.['min']">El precio no puede ser negativo.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkbox para Activar Servicio -->
+    <div class="form-check">
+      <input type="checkbox" id="isActive" class="form-check-input" formControlName="isActive">
+      <label for="isActive" class="form-check-label">Activar este servicio inmediatamente</label>
+      <small class="form-text text-muted">Si está activo, otros usuarios podrán reservarlo.</small>
+    </div>
+
+    <!-- Mensajes de Estado y Botones -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="serviceForm.invalid || isSubmitting">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!isSubmitting">Guardar Cambios</span>
+      </button>
+    </div>
+  </form>
+</div>

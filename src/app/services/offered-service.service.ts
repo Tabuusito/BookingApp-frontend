@@ -2,18 +2,45 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { OfferedService } from '../models/offered-service.models';
+import { CreateOfferedServiceRequest, OfferedService, UpdateOfferedServiceRequest } from '../models/offered-service.models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OfferedServiceService {
-  private apiUrl = `${environment.apiUrl}/api/admin/services`;
+  // Cambiamos el endpoint a /api/me/services para las operaciones del usuario logueado
+  private myServicesApiUrl = `${environment.apiUrl}/api/me/services`;
+  private adminApiUrl = `${environment.apiUrl}/api/admin/services`;
 
   constructor(private http: HttpClient) { }
 
-  // Obtenemos solo los servicios activos
+  // Obtiene los servicios del usuario logueado
+  getMyServices(): Observable<OfferedService[]> {
+    return this.http.get<OfferedService[]>(this.myServicesApiUrl);
+  }
+
+  // Obtiene todos los servicios (usado para crear reservas)
   getActiveServices(): Observable<OfferedService[]> {
-    return this.http.get<OfferedService[]>(this.apiUrl, { params: { activeOnly: true } });
+    return this.http.get<OfferedService[]>(this.myServicesApiUrl, { params: { activeOnly: true } });
+  }
+
+  // --- MÉTODO NUEVO PARA CREAR SERVICIO ---
+  createService(request: CreateOfferedServiceRequest): Observable<OfferedService> {
+    return this.http.post<OfferedService>(this.myServicesApiUrl, request);
+  }
+
+  getServiceById(id: number): Observable<OfferedService> {
+    // Según tu API, el endpoint para obtener un servicio por ID es /api/me/services/{id}
+    return this.http.get<OfferedService>(`${this.myServicesApiUrl}/${id}`);
+  }
+
+  updateService(id: number, request: UpdateOfferedServiceRequest): Observable<OfferedService> {
+    return this.http.put<OfferedService>(`${this.myServicesApiUrl}/${id}`, request);
+  }
+  
+  // Opcional: un método específico para cambiar el estado es muy útil
+  updateServiceStatus(id: number, isActive: boolean): Observable<OfferedService> {
+    const request: UpdateOfferedServiceRequest = { isActive };
+    return this.updateService(id, request);
   }
 }

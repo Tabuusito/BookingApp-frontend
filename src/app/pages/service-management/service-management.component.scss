@@ -1,0 +1,28 @@
+.management-container {
+  padding-top: 40px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  h1 {
+    color: var(--primary-color);
+  }
+  
+  .btn i {
+    margin-right: 8px;
+  }
+}
+
+.table {
+  th {
+    color: var(--text-light-color);
+  }
+  .form-check-input:checked {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+  }
+}

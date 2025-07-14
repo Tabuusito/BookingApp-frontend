@@ -1,0 +1,20 @@
+.management-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  
+  h3 {
+    color: var(--text-light-color);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
+
+.management-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  .btn i {
+    margin-right: 8px;
+  }
+}

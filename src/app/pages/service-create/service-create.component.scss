@@ -1,0 +1,47 @@
+// Estos estilos son muy similares a los de reservation-create
+.service-create-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+  h2, .subtitle {
+    text-align: center;
+  }
+  h2 { color: var(--primary-color); }
+  .subtitle { color: var(--text-light-color); margin-bottom: 30px; }
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  > .form-group {
+    flex: 1;
+  }
+}
+
+.form-check {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .form-check-input {
+    width: auto; // override de los estilos globales si es necesario
+    height: 1.2em;
+    width: 1.2em;
+  }
+  
+  .form-check-label {
+    margin-bottom: 0;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}

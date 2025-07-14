@@ -6,14 +6,14 @@ import { Subscription } from 'rxjs';
 import { CommonModule, registerLocaleData } from '@angular/common'; // <-- Necesario para los pipes
 import { FormsModule } from '@angular/forms';
 import localeEs from '@angular/common/locales/es';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 registerLocaleData(localeEs, 'es'); // Registra el idioma español para los pipes
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   providers: [{ provide: LOCALE_ID, useValue: 'es' }] // Establece español por defecto
@@ -82,6 +82,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   goToReservationCreation(): void {
     this.router.navigate(['/reservations/new']);
+  }
+
+  goToMyServices(): void {
+    this.router.navigate(['/services'])
   }
 
   logout(): void {

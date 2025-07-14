@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
 import { CommonModule, Location } from '@angular/common'; 
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { OfferedService } from '../../models/offered-service.models';
 import { CreateReservationRequest } from '../../models/reservation.models';
@@ -11,7 +11,7 @@ import { ReservationService } from '../../services/reservation.service';
 @Component({
   selector: 'app-reservation-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './reservation-create.component.html',
   styleUrls: ['./reservation-create.component.scss'],
 })
