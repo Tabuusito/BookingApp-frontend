@@ -16,7 +16,7 @@ export class OfferedServiceService {
 
   // Obtiene los servicios del usuario logueado
   getMyServices(): Observable<OfferedService[]> {
-    return this.http.get<OfferedService[]>(this.myServicesApiUrl);
+    return this.http.get<OfferedService[]>(this.myServicesApiUrl, { params: { activeOnly: false } });
   }
 
   // Obtiene todos los servicios (usado para crear reservas)

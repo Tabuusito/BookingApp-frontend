@@ -26,3 +26,27 @@
     border-color: var(--success-color);
   }
 }
+
+.page-navigation {
+  margin-bottom: 25px; // Espacio entre el enlace y el título
+}
+
+.back-link {
+  display: inline-flex; // Para alinear el icono y el texto
+  align-items: center;
+  gap: 8px; // Espacio entre el icono y el texto
+  
+  color: var(--text-light-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+  }
+
+  i {
+    font-size: 1.2em; // Hacer el icono un poco más grande
+  }
+}

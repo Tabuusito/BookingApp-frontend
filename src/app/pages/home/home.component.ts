@@ -88,6 +88,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/services'])
   }
 
+  navigateToReservationDetails(reservationId: number): void {
+    this.router.navigate(['/reservations/detail', reservationId])
+  }
+
   logout(): void {
     this.authService.logout();
   }

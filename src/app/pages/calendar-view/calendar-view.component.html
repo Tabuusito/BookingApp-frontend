@@ -100,6 +100,8 @@
       (eventTimesChanged)="eventTimesChanged($event)"
       [weekStartsOn]="1"
       locale="es"
+      [dayStartHour]="6"
+      [dayEndHour]="22"
     >
     </mwl-calendar-week-view>
 
@@ -112,6 +114,8 @@
       (eventClicked)="handleEvent('Clickeado', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
       locale="es"
+      [dayStartHour]="6"  
+      [dayEndHour]="22"
     >
     </mwl-calendar-day-view>
   </div>

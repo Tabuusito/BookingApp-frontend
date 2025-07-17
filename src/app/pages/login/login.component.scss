@@ -1,0 +1,29 @@
+/* ==========================================================================
+   Mover a: login.component.scss y register.component.scss
+   (Estos estilos son compartidos por ambos)
+   ========================================================================== */
+
+// Ancho máximo específico para los formularios de autenticación.
+:host .container {
+    max-width: 450px;
+}
+
+.auth-links {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 14px;
+
+  p {
+    margin-bottom: 10px;
+    color: var(--text-light-color);
+  }
+
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

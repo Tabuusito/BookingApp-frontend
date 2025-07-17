@@ -1,54 +1,53 @@
-@import "bootstrap-icons/font/bootstrap-icons.css";
+/* ==========================================================================
+   HOJA DE ESTILOS GLOBAL
+   Contiene variables, resets y estilos de utilidad para toda la aplicación.
+   ========================================================================== */
+
+/* 1. Importaciones de librerías globales */
+/* Estas deben estar aquí, ya que Bootstrap provee variables y mixins
+   que podrían ser útiles en toda la aplicación. */
 @import "bootstrap/scss/bootstrap.scss";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
 
-/* Variables de Color Neutras */
+/* 2. Variables de Color Globales (CSS Custom Properties) */
+/* Definidas en :root para que estén disponibles en todos los componentes. */
 :root {
-  --primary-color: #4a90e2; // Un azul suave
-  --secondary-color: #50e3c2; // Un verde menta suave
-  --background-color: #f4f7f6;
-  --card-background-color: #ffffff;
-  --text-color: #333333;
-  --text-light-color: #777777;
-  --border-color: #e0e0e0;
-  --error-color: #d9534f;
-  --success-color: #5cb85c;
+  --primary-color: #4a90e2;        // Un azul suave para acciones principales
+  --secondary-color: #50e3c2;      // Un verde menta para acciones secundarias
+  --background-color: #f4f7f6;     // Color de fondo general de la app
+  --card-background-color: #ffffff; // Fondo para tarjetas y contenedores
+  --text-color: #333333;           // Color de texto principal
+  --text-light-color: #777777;     // Color para texto secundario o labels
+  --border-color: #e0e0e0;         // Color para bordes y separadores
+  --error-color: #d9534f;          // Rojo para mensajes de error
+  --success-color: #5cb85c;        // Verde para mensajes de éxito
 }
 
-/* Reset básico y estilos globales */
+
+/* 3. Reset básico y estilos para el <body> */
+/* Establece el aspecto base de la página. */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
-.container {
+
+/* 4. Estilos de componentes de UI comunes y reutilizables (Utilities) */
+/* Clases que se pueden aplicar en múltiples componentes. */
+
+/* Estilos base para contenedores principales de las páginas */
+.container-card {
   background-color: var(--card-background-color);
   padding: 30px 40px;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 450px; // Ancho máximo para formularios de login/registro
 }
 
-.home-container {
-  max-width: 800px; // Ancho mayor para la página home
-}
-
-h1, h2, h3 {
-  color: var(--primary-color);
-  margin-top: 0;
-  text-align: center;
-  margin-bottom: 25px;
-}
-
+/* Estilos de formularios (usados en login, registro, creación, etc.) */
 .form-group {
   margin-bottom: 20px;
 
@@ -59,230 +58,50 @@ h1, h2, h3 {
     color: var(--text-light-color);
   }
 
+  // Estilos para varios tipos de input
   input[type="text"],
   input[type="email"],
-  input[type="password"] {
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 16px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff; // Asegurar fondo blanco
 
     &:focus {
       outline: none;
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
     }
   }
-}
 
-.btn {
-  display: inline-block;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s ease, transform 0.1s ease;
-
-  &:hover {
-    opacity: 0.9;
-  }
-  &:active {
-    transform: scale(0.98);
+  textarea {
+    resize: vertical; // Permitir solo redimensionamiento vertical
   }
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
-  width: 100%;
+/* Estilos para los botones de acción al final de los formularios */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
 }
 
-.btn-secondary {
-  background-color: var(--secondary-color);
-  color: white;
-}
-
-.btn-link {
-  background-color: transparent;
-  color: var(--primary-color);
-  padding: 0;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-.auth-links {
-  margin-top: 25px;
-  text-align: center;
-  font-size: 14px;
-
-  p {
-    margin-bottom: 10px;
-    color: var(--text-light-color);
-  }
-
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
+/* Clases de utilidad para mensajes y estados */
 .error-message {
   color: var(--error-color);
-  font-size: 14px;
-  margin-top: -10px;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-/* Estilos específicos para Home */
-.home-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid var(--border-color);
-
-  h1 {
-    margin-bottom: 0;
-    text-align: left;
-  }
-}
-
-.welcome-message {
-  font-size: 18px;
-  margin-bottom: 25px;
-  color: var(--text-light-color);
-}
-
-.placeholder-section {
-  background-color: var(--background-color);
-  border: 1px dashed var(--border-color);
-  padding: 30px;
-  text-align: center;
-  color: var(--text-light-color);
-  border-radius: 5px;
-  margin-top: 20px;
-  font-style: italic;
-}
-
-/* Estilos para las tarjetas de reserva */
-.reservations-section {
-  margin-top: 40px;
-}
-
-.reservation-card {
-  background-color: #fff;
-  border-left: 5px solid var(--border-color);
-  border-radius: 5px;
-  padding: 15px 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--background-color);
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-
-    .service-name {
-      margin: 0;
-      font-size: 1.1em;
-      color: var(--primary-color);
-    }
-  }
-  
-  .card-body p {
-    margin: 5px 0;
-    color: var(--text-light-color);
-  }
-
-  .card-footer {
-    margin-top: 15px;
-    text-align: right;
-  }
-}
-
-/* Estilos de estado */
-.status-badge {
-  font-size: 0.8em;
-  padding: 4px 8px;
-  border-radius: 12px;
-  color: #fff;
-  font-weight: 500;
-}
-
-.status-confirmed {
-  border-left-color: #28a745;
-  .status-badge { background-color: #28a745; }
-}
-
-.status-pending {
-  border-left-color: #ffc107;
-  .status-badge { background-color: #ffc107; color: #333; }
-}
-
-.status-cancelled {
-  border-left-color: #6c757d;
-  opacity: 0.7;
-  .status-badge { background-color: #6c757d; }
-}
-
-.calendar-container {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.calendar-header {
-  margin-bottom: 20px;
-  align-items: center;
-
-  h3 {
-    margin: 0;
-    color: var(--primary-color);
-  }
-
-  .btn-group {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-}
-
-// Para hacer los botones del selector de vista un poco más pequeños
-.col-md-4:last-child .btn {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.9rem;
-}
-
-// Estilos para el calendario en sí. A menudo necesitarás anular algunos estilos
-// de la librería para que coincidan con tu tema.
-// El selector :host ::ng-deep es para penetrar el encapsulamiento de estilos
-// y modificar los estilos de un componente hijo (el calendario).
-
-:host ::ng-deep .cal-month-view .cal-cell-top {
-  min-height: 80px; // Aumentar la altura de las celdas del día
-}
-
-:host ::ng-deep .cal-event-title {
-  font-size: 0.85em;
+  font-size: 0.875em; // 14px
+  margin-top: 5px;
+  min-height: 1em; // Evita saltos en el layout si el mensaje aparece/desaparece
 }
 
 .loading-spinner {
@@ -292,68 +111,9 @@ h1, h2, h3 {
   color: var(--text-light-color);
 }
 
-.back-link {
-  margin-top: 20px;
+.placeholder-text {
   text-align: center;
-  a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+  padding: 20px;
+  color: var(--text-light-color);
+  font-style: italic;
 }
-
-.reservation-create-container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-
-  h2 {
-    text-align: center;
-    color: var(--primary-color);
-  }
-
-  .subtitle {
-    text-align: center;
-    color: var(--text-light-color);
-    margin-bottom: 30px;
-  }
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-// Para usar el mismo estilo de los otros formularios
-.form-group, .form-control, .error-message, .btn {
-  // Estos estilos ya deberían estar definidos en tu `styles.scss` global.
-  // Si no, cópialos de allí.
-}
-
-.alert {
-  padding: 15px;
-  margin-top: 20px;
-  border-radius: 5px;
-  border: 1px solid transparent;
-}
-
-.alert-danger {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-}
-
-.alert-success {
-  color: #155724;
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-}
-

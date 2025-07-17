@@ -2,3 +2,18 @@
     font-size: 0.85em;
     font-weight: 500;
 }
+:host .container {
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+h2 {
+    text-align: center;
+    color: var(--primary-color);
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--text-light-color);
+  margin-bottom: 30px;
+}

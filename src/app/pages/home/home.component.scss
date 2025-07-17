@@ -1,20 +1,104 @@
-.management-section {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-  
-  h3 {
-    color: var(--text-light-color);
-    text-align: center;
-    margin-bottom: 20px;
+:host .container {
+    max-width: 800px;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+
+  h1 {
+    margin-bottom: 0;
+    text-align: left;
   }
 }
 
-.management-links {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  .btn i {
-    margin-right: 8px;
+.welcome-message {
+  font-size: 18px;
+  margin-bottom: 25px;
+  color: var(--text-light-color);
+}
+
+// Este puede ser un placeholder o parte de la home
+.placeholder-section {
+  background-color: var(--background-color);
+  border: 1px dashed var(--border-color);
+  padding: 30px;
+  text-align: center;
+  color: var(--text-light-color);
+  border-radius: 5px;
+  margin-top: 20px;
+  font-style: italic;
+}
+
+/* Estilos para las tarjetas de reserva en la Home */
+.reservations-section {
+  margin-top: 40px;
+}
+
+.reservation-card {
+  background-color: #fff;
+  border-left: 5px solid var(--border-color);
+  border-radius: 5px;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--background-color);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+    .service-name {
+      margin: 0;
+      font-size: 1.1em;
+      color: var(--primary-color);
+    }
+  }
+  
+  .card-body p {
+    margin: 5px 0;
+    color: var(--text-light-color);
+  }
+
+  .card-footer {
+    margin-top: 15px;
+    text-align: right;
+  }
+}
+
+/* Estilos de estado (usados en las tarjetas de reserva) */
+.status-badge {
+  font-size: 0.8em;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.status-confirmed {
+  border-left-color: #28a745;
+  .status-badge { background-color: #28a745; }
+}
+
+.status-pending {
+  border-left-color: #ffc107;
+  .status-badge { background-color: #ffc107; color: #333; }
+}
+
+.status-cancelled {
+  border-left-color: #6c757d;
+  opacity: 0.7;
+  .status-badge { background-color: #6c757d; }
 }

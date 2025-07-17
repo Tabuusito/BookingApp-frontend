@@ -38,7 +38,7 @@
           <p *ngIf="res.price > 0"><strong>Precio:</strong> {{ res.price | currency:'EUR' }}</p>
         </div>
         <div class="card-footer">
-          <button class="btn btn-link">Ver Detalles</button>
+          <button (click)="navigateToReservationDetails(res.reservationId)" class="btn btn-link">Ver Detalles</button>
           <button (click)="cancelReservation(res.reservationId)" class="btn btn-link-danger">Cancelar</button>
         </div>
       </div>
