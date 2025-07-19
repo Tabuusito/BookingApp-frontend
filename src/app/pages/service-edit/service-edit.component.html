@@ -8,9 +8,8 @@
     <div class="form-group">
       <label for="name">Nombre del Servicio</label>
       <input type="text" id="name" class="form-control" formControlName="name">
-      <div *ngIf="f['name'].invalid && f['name'].touched" class="error-message">
-        <span *ngIf="f['name'].errors?.['required']">El nombre es requerido.</span>
-        <span *ngIf="f['name'].errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+      <div *ngIf="getErrorMessage('name')" class="error-message">
+        {{ getErrorMessage('name') }}
       </div>
     </div>
 
@@ -26,9 +25,8 @@
       <div class="form-group">
         <label for="duration">Duración (en minutos)</label>
         <input type="number" id="duration" class="form-control" formControlName="durationMinutes">
-        <div *ngIf="f['durationMinutes'].invalid && f['durationMinutes'].touched" class="error-message">
-          <span *ngIf="f['durationMinutes'].errors?.['required']">La duración es requerida.</span>
-          <span *ngIf="f['durationMinutes'].errors?.['min']">La duración debe ser al menos 1 minuto.</span>
+        <div *ngIf="getErrorMessage('durationMinutes')" class="error-message">
+          {{ getErrorMessage('durationMinutes') }}
         </div>
       </div>
 
@@ -36,9 +34,8 @@
       <div class="form-group">
         <label for="price">Precio por Reserva (€)</label>
         <input type="number" id="price" class="form-control" formControlName="pricePerReservation">
-        <div *ngIf="f['pricePerReservation'].invalid && f['pricePerReservation'].touched" class="error-message">
-          <span *ngIf="f['pricePerReservation'].errors?.['required']">El precio es requerido.</span>
-          <span *ngIf="f['pricePerReservation'].errors?.['min']">El precio no puede ser negativo.</span>
+        <div *ngIf="getErrorMessage('pricePerReservation')" class="error-message">
+          {{ getErrorMessage('pricePerReservation') }}
         </div>
       </div>
     </div>

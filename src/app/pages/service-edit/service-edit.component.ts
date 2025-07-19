@@ -76,7 +76,34 @@ export class ServiceEditComponent implements OnInit {
     });
   }
 
-  get f() { return this.serviceForm.controls; }
+  public getErrorMessage(controlName: string): string | null {
+    const control = this.serviceForm.get(controlName);
+
+    // No mostrar error si el control es válido o no ha sido tocado
+    if (!control || !control.invalid || !(control.touched || control.dirty)) {
+      return null;
+    }
+
+    const errors = control.errors;
+    if (errors) {
+      if (errors['required']) {
+        return 'Este campo es requerido.';
+      }
+      if (errors['minlength']) {
+        const requiredLength = errors['minlength'].requiredLength;
+        return `Debe tener al menos ${requiredLength} caracteres.`;
+      }
+      if (errors['min']) {
+        const minValue = errors['min'].min;
+        return `El valor debe ser al menos ${minValue}.`;
+      }
+      if (errors['serverError']) {
+        return errors['serverError'];
+      }
+    }
+
+    return 'El valor ingresado es inválido.';
+  }
 
   onSubmit(): void {
     if (this.serviceForm.invalid || !this.serviceUuid) {

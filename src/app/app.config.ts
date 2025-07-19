@@ -9,11 +9,12 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { httpErrorInterceptor } from './interceptors/http-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes),
               provideClientHydration(),
-              provideHttpClient(withInterceptors([authInterceptor]), withFetch()),
+              provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor]), withFetch()),
               importProvidersFrom(NgbModule),
 
               importProvidersFrom(CalendarModule.forRoot({
