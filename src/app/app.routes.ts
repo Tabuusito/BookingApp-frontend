@@ -14,12 +14,12 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
-  { path: 'reservations/detail/:id', component: ReservationDetailComponent, canActivate: [authGuard] },
+  { path: 'reservations/detail/:reservationUuid', component: ReservationDetailComponent, canActivate: [authGuard] },
   { path: 'reservations/new', component: ReservationCreateComponent, canActivate: [authGuard] },
   { path: 'calendar', component: CalendarViewComponent, canActivate: [authGuard] },
   { path: 'services/new', component: ServiceCreateComponent, canActivate: [authGuard] },
   { path: 'my-services', component: ServiceManagementComponent, canActivate: [authGuard] },
-  { path: 'services/edit/:id', component: ServiceEditComponent, canActivate: [authGuard] },
+  { path: 'services/edit/:serviceUuid', component: ServiceEditComponent, canActivate: [authGuard] },
   
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }

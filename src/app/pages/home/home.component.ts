@@ -61,9 +61,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  cancelReservation(id: number): void {
+  cancelReservation(uuid: string): void {
     if (confirm('¿Estás seguro de que quieres cancelar esta reserva?')) {
-      this.reservationService.cancelMyReservation(id).subscribe({
+      this.reservationService.cancelMyReservation(uuid).subscribe({
         next: () => {
           alert('Reserva cancelada con éxito');
           this.loadReservations(); // Recargar la lista
@@ -88,8 +88,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/services'])
   }
 
-  navigateToReservationDetails(reservationId: number): void {
-    this.router.navigate(['/reservations/detail', reservationId])
+  navigateToReservationDetails(reservationUuid: string): void {
+    this.router.navigate(['/reservations/detail', reservationUuid])
   }
 
   logout(): void {

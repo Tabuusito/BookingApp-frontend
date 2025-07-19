@@ -38,7 +38,7 @@ export class ReservationCreateComponent implements OnInit {
 
   private initForm(): void {
     this.reservationForm = this.fb.group({
-      serviceId: [null, Validators.required],
+      serviceUuid: [null, Validators.required],
       date: ['', Validators.required],
       time: ['', Validators.required],
       notes: [''],
@@ -74,7 +74,7 @@ export class ReservationCreateComponent implements OnInit {
 
     const formValue = this.reservationForm.value;
     const startTime = new Date(`${formValue.date}T${formValue.time}`);
-    const selectedService = this.availableServices.find(s => s.serviceId === formValue.serviceId);
+    const selectedService = this.availableServices.find(s => s.serviceUuid === formValue.serviceUuid);
     
     if (!selectedService) {
         this.errorMessage = 'Servicio seleccionado no válido.';
@@ -84,18 +84,19 @@ export class ReservationCreateComponent implements OnInit {
     const endTime = new Date(startTime.getTime() + selectedService.defaultDurationSeconds * 1000);
 
     const request: CreateReservationRequest = {
-      serviceId: formValue.serviceId,
+      serviceUuid: formValue.serviceUuid,
       startTime: startTime.toISOString(),
       endTime: endTime.toISOString(),
       notes: formValue.notes,
     };
 
+    console.log(startTime);
     // --- CAMBIO CLAVE AQUÍ ---
     this.reservationService.createReservation(request).subscribe({
       // El método createReservation devuelve la nueva reserva creada (ReservationResponseDTO)
       next: (newReservation) => {
         // Redirigir inmediatamente a la página de detalles de la nueva reserva
-        this.router.navigate(['/reservations/detail', newReservation.reservationId]);
+        this.router.navigate(['/reservations/detail', newReservation.reservationUuid]);
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Ocurrió un error al crear la reserva.';

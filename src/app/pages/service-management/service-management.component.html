@@ -43,16 +43,16 @@
                 class="form-check-input" 
                 type="checkbox" 
                 role="switch"
-                [id]="'switch-' + service.serviceId"
+                [id]="'switch-' + service.serviceUuid"
                 [checked]="service.active"
                 (change)="onStatusChange(service, $event)">
-              <label class="form-check-label" [for]="'switch-' + service.serviceId">
+              <label class="form-check-label" [for]="'switch-' + service.serviceUuid">
                 {{ service.active ? 'Activo' : 'Inactivo' }}
               </label>
             </div>
           </td>
           <td>
-            <a [routerLink]="['/services/edit', service.serviceId]" class="btn btn-sm btn-outline-secondary">
+            <a [routerLink]="['/services/edit', service.serviceUuid]" class="btn btn-sm btn-outline-secondary">
               <i class="bi bi-pencil-fill"></i> Editar
             </a>
           </td>

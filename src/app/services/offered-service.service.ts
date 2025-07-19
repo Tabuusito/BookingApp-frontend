@@ -29,18 +29,18 @@ export class OfferedServiceService {
     return this.http.post<OfferedService>(this.myServicesApiUrl, request);
   }
 
-  getServiceById(id: number): Observable<OfferedService> {
+  getServiceByUuid(uuid: string): Observable<OfferedService> {
     // Según tu API, el endpoint para obtener un servicio por ID es /api/me/services/{id}
-    return this.http.get<OfferedService>(`${this.myServicesApiUrl}/${id}`);
+    return this.http.get<OfferedService>(`${this.myServicesApiUrl}/${uuid}`);
   }
 
-  updateService(id: number, request: UpdateOfferedServiceRequest): Observable<OfferedService> {
-    return this.http.put<OfferedService>(`${this.myServicesApiUrl}/${id}`, request);
+  updateService(uuid: string, request: UpdateOfferedServiceRequest): Observable<OfferedService> {
+    return this.http.put<OfferedService>(`${this.myServicesApiUrl}/${uuid}`, request);
   }
   
   // Opcional: un método específico para cambiar el estado es muy útil
-  updateServiceStatus(id: number, isActive: boolean): Observable<OfferedService> {
+  updateServiceStatus(uuid: string, isActive: boolean): Observable<OfferedService> {
     const request: UpdateOfferedServiceRequest = { isActive };
-    return this.updateService(id, request);
+    return this.updateService(uuid, request);
   }
 }

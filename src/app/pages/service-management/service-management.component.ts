@@ -44,10 +44,10 @@ export class ServiceManagementComponent implements OnInit {
     // revertimos el estado visualmente y solo lo actualizamos en el `next`.
     input.checked = !newStatus;
 
-    this.offeredServiceService.updateServiceStatus(service.serviceId, newStatus).subscribe({
+    this.offeredServiceService.updateServiceStatus(service.serviceUuid, newStatus).subscribe({
       next: (updatedService) => {
         // Encontramos el servicio en el array y lo actualizamos
-        const index = this.services.findIndex(s => s.serviceId === updatedService.serviceId);
+        const index = this.services.findIndex(s => s.serviceUuid === updatedService.serviceUuid);
         if (index !== -1) {
           this.services[index] = updatedService;
         }

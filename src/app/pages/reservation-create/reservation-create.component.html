@@ -12,13 +12,13 @@
         <label for="service">Servicio</label>
         <a [routerLink]="['/services/new']" [queryParams]="{ returnTo: '/reservations/new' }" class="small-link">(+ Crear nuevo servicio)</a>
       </div>
-      <select id="service" class="form-control" formControlName="serviceId">
+      <select id="service" class="form-control" formControlName="serviceUuid">
         <option [ngValue]="null" disabled>-- Selecciona un servicio --</option>
-        <option *ngFor="let service of availableServices" [ngValue]="service.serviceId">
+        <option *ngFor="let service of availableServices" [ngValue]="service.serviceUuid">
           {{ service.name }} ({{ service.pricePerReservation | currency:'EUR' }})
         </option>
       </select>
-      <div *ngIf="f['serviceId'].invalid && f['serviceId'].touched" class="error-message">
+      <div *ngIf="f['serviceUuid'].invalid && f['serviceUuid'].touched" class="error-message">
         Debes seleccionar un servicio.
       </div>
     </div>

@@ -1,6 +1,6 @@
 export interface OfferedService {
-  serviceId: number;
-  ownerId: number;
+  serviceUuid: string;
+  ownerUuid: string;
   name: string;
   description: string | null;
   pricePerReservation: number;

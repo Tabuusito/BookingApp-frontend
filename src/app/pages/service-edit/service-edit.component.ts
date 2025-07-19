@@ -19,7 +19,7 @@ export class ServiceEditComponent implements OnInit {
   isSubmitting = false;
   isLoading = true;
   errorMessage = '';
-  serviceId: number | null = null;
+  serviceUuid: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -48,13 +48,13 @@ export class ServiceEditComponent implements OnInit {
   private loadServiceData(): void {
     this.route.paramMap.pipe(
       switchMap(params => {
-        const id = params.get('id');
-        if (!id) {
+        const uuid = params.get('serviceUuid');
+        if (!uuid) {
           this.router.navigate(['/my-services']); // Redirige si no hay ID
-          throw new Error('No service ID provided');
+          throw new Error('No service UUID provided');
         }
-        this.serviceId = +id;
-        return this.offeredServiceService.getServiceById(this.serviceId);
+        this.serviceUuid = uuid;
+        return this.offeredServiceService.getServiceByUuid(this.serviceUuid);
       })
     ).subscribe({
       next: (service) => {
@@ -79,7 +79,7 @@ export class ServiceEditComponent implements OnInit {
   get f() { return this.serviceForm.controls; }
 
   onSubmit(): void {
-    if (this.serviceForm.invalid || !this.serviceId) {
+    if (this.serviceForm.invalid || !this.serviceUuid) {
       return;
     }
 
@@ -95,7 +95,7 @@ export class ServiceEditComponent implements OnInit {
       isActive: formValue.isActive,
     };
 
-    this.offeredServiceService.updateService(this.serviceId, request).subscribe({
+    this.offeredServiceService.updateService(this.serviceUuid, request).subscribe({
       next: () => {
         alert('¡Servicio actualizado con éxito!');
         this.router.navigate(['/my-services']);

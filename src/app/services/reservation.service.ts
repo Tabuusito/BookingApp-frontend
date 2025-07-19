@@ -16,15 +16,15 @@ export class ReservationService {
     return this.http.get<ReservationResponseDTO[]>(this.apiUrl);
   }
 
-  cancelMyReservation(id: number): Observable<ReservationResponseDTO> {
-    return this.http.post<ReservationResponseDTO>(`${this.apiUrl}/${id}/cancel`, {});
+  cancelMyReservation(uuid: string): Observable<ReservationResponseDTO> {
+    return this.http.post<ReservationResponseDTO>(`${this.apiUrl}/${uuid}/cancel`, {});
   }
 
   createReservation(request: CreateReservationRequest): Observable<ReservationResponseDTO> {
     return this.http.post<ReservationResponseDTO>(this.apiUrl, request);
   }
 
-  getReservationById(id: number): Observable<ReservationResponseDTO> {
-    return this.http.get<ReservationResponseDTO>(`${this.apiUrl}/${id}`);
+  getReservationByUuid(uuid: string): Observable<ReservationResponseDTO> {
+    return this.http.get<ReservationResponseDTO>(`${this.apiUrl}/${uuid}`);
   }
 }

@@ -34,13 +34,13 @@ export class ReservationDetailComponent implements OnInit {
     // switchMap cancela la petición anterior si el ID cambia (útil en SPA).
     this.reservation$ = this.route.paramMap.pipe(
       switchMap(params => {
-        const id = params.get('id');
-        if (id) {
+        const uuid = params.get('reservationUuid');
+        if (uuid) {
           this.isLoading = true;
           this.errorMessage = '';
-          return this.reservationService.getReservationById(+id); // el '+' convierte el string a número
+          return this.reservationService.getReservationByUuid(uuid);
         } else {
-          this.errorMessage = 'No se encontró el ID de la reserva.';
+          this.errorMessage = 'No se encontró el UUID de la reserva.';
           this.isLoading = false;
           return new Observable<ReservationResponseDTO>(); // Devuelve un observable vacío si no hay ID
         }

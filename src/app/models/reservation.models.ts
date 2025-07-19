@@ -2,10 +2,10 @@ export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLET
 
 
 export interface ReservationResponseDTO {
-  reservationId: number;
-  ownerId: number;
+  reservationUuid: string;
+  ownerUuid: string;
   ownerUsername: string;
-  serviceId: number;
+  serviceUuid: string;
   serviceName: string;
   startTime: string; // Formato ISO 8601, ej: "2024-05-21T10:00:00Z"
   endTime: string;   // Formato ISO 8601, ej: "2024-05-21T11:00:00Z"
@@ -18,7 +18,7 @@ export interface ReservationResponseDTO {
 
 export interface CreateReservationRequest {
   // ownerId será añadido por el backend a partir del token JWT
-  serviceId: number;
+  serviceUuid: string;
   startTime: string; // Formato ISO
   endTime: string;   // Formato ISO
   notes?: string;    // Opcional
