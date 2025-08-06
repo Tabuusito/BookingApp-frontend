@@ -3,12 +3,18 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { jwtDecode } from 'jwt-decode'; // <-- Importa la librería
+import { catchError, tap, map } from 'rxjs/operators';
+import { jwtDecode } from 'jwt-decode';
 
 import { environment } from '../../environments/environment'
 import { AuthResponse, LoginRequest, RegisterRequest } from './models/auth.models';
 
+interface DecodedToken {
+  sub: string; // Subject (username)
+  roles: string[]; // El array de roles
+  iat: number; // Issued at
+  exp: number; // Expiration time
+}
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +25,11 @@ export class AuthService {
 
   private loggedIn = new BehaviorSubject<boolean>(false);
   private currentUser = new BehaviorSubject<string | null>(null);
+  private userRoles = new BehaviorSubject<string[]>([]);
 
   isLoggedIn$: Observable<boolean> = this.loggedIn.asObservable();
   currentUser$: Observable<string | null> = this.currentUser.asObservable();
+  userRoles$: Observable<string[]> = this.userRoles.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -92,12 +100,12 @@ export class AuthService {
 
   private updateAuthState(token: string): void {
     try {
-      // jwt-decode devuelve un objeto con los claims del token
-      // Comúnmente el username está en el claim 'sub' (subject)
-      const decodedToken: { sub: string, [key: string]: any } = jwtDecode(token);
+      const decodedToken: DecodedToken = jwtDecode(token);
       
       this.loggedIn.next(true);
-      this.currentUser.next(decodedToken.sub); // Asumimos que el username está en 'sub'
+      this.currentUser.next(decodedToken.sub);
+      this.userRoles.next(decodedToken.roles || []);
+
     } catch (error) {
       console.error("Error decodificando el token", error);
       this.logoutInternal();
@@ -110,5 +118,18 @@ export class AuthService {
     }
     this.loggedIn.next(false);
     this.currentUser.next(null);
+    this.userRoles.next([]);
+  }
+
+  isClient(): Observable<boolean> {
+    return this.userRoles$.pipe(map(roles => roles.includes('ROLE_CLIENT')));
+  }
+
+  isProvider(): Observable<boolean> {
+    return this.userRoles$.pipe(map(roles => roles.includes('ROLE_PROVIDER')));
+  }
+
+  isAdmin(): Observable<boolean> {
+    return this.userRoles$.pipe(map(roles => roles.includes('ROLE_ADMIN')));
   }
 }

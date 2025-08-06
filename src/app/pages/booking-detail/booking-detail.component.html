@@ -1,44 +1,48 @@
 <div class="container detail-container">
   
+  <!-- Mensajes de Carga y Error -->
   <div *ngIf="isLoading" class="loading-spinner">Cargando detalles de la reserva...</div>
-  
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-  <!-- Usamos el pipe 'async' para suscribirnos automáticamente al observable 'reservation$' -->
-  <ng-container *ngIf="(reservation$ | async) as reservation; else noReservation">
+  <!-- Contenido principal (usando el pipe async) -->
+  <ng-container *ngIf="(booking$ | async) as booking; else noBooking">
     <div class="card">
-      <div class="card-header" [ngClass]="'status-' + reservation.status.toLowerCase()">
+      <div class="card-header" [ngClass]="'status-' + booking.status.toLowerCase()">
         <h2>Detalles de la Reserva</h2>
-        <span class="status-badge">{{ reservation.status }}</span>
+        <span class="status-badge">{{ booking.status }}</span>
       </div>
       <div class="card-body">
         <div class="detail-item">
           <span class="label">ID de Reserva:</span>
-          <span class="value">#{{ reservation.reservationUuid }}</span>
+          <span class="value">#{{ booking.bookingUuid }}</span>
         </div>
         <div class="detail-item">
           <span class="label">Servicio:</span>
-          <span class="value">{{ reservation.serviceName }}</span>
+          <span class="value">{{ booking.serviceName }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Reservado por:</span>
+          <span class="value">{{ booking.clientUsername }}</span>
         </div>
         <div class="detail-item">
           <span class="label">Fecha:</span>
-          <span class="value">{{ reservation.startTime | date:'fullDate' }}</span>
+          <span class="value">{{ booking.startTime | date:'fullDate':'':'es' }}</span>
         </div>
         <div class="detail-item">
           <span class="label">Horario:</span>
-          <span class="value">{{ reservation.startTime | date:'shortTime' }} - {{ reservation.endTime | date:'shortTime' }}</span>
+          <span class="value">{{ booking.startTime | date:'shortTime' }} - {{ booking.endTime | date:'shortTime' }}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Precio:</span>
-          <span class="value">{{ reservation.price | currency:'EUR' }}</span>
+          <span class="label">Precio Pagado:</span>
+          <span class="value">{{ booking.pricePaid | currency:'EUR' }}</span>
         </div>
-        <div class="detail-item notes" *ngIf="reservation.notes">
+        <div class="detail-item notes" *ngIf="booking.notes">
           <span class="label">Notas:</span>
-          <p class="value">{{ reservation.notes }}</p>
+          <p class="value">{{ booking.notes }}</p>
         </div>
         <div class="detail-item created-at">
-          <span class="label">Creada el:</span>
-          <span class="value">{{ reservation.createdAt | date:'medium' }}</span>
+          <span class="label">Reserva creada el:</span>
+          <span class="value">{{ booking.createdAt | date:'medium':'':'es' }}</span>
         </div>
       </div>
       <div class="card-footer">
@@ -48,7 +52,8 @@
     </div>
   </ng-container>
 
-  <ng-template #noReservation>
+  <!-- Estado por defecto si no se encuentra el booking -->
+  <ng-template #noBooking>
     <div *ngIf="!isLoading && !errorMessage" class="placeholder-text">
       No se han podido cargar los datos de la reserva.
     </div>

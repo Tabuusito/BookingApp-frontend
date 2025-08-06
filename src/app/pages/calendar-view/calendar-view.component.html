@@ -1,68 +1,28 @@
 <div class="container calendar-container">
   
-  <!-- Encabezado y Navegación del Calendario -->
+  <!-- Encabezado y Navegación del Calendario (sin cambios) -->
   <div class="row text-center calendar-header">
-    
-    <!-- Controles de Navegación (Anterior, Hoy, Siguiente) -->
     <div class="col-md-4">
       <div class="btn-group">
-        <div
-          class="btn btn-primary"
-          mwlCalendarPreviousView
-          [view]="view"
-          [(viewDate)]="viewDate"
-          (viewDateChange)="closeOpenMonthViewDay()"
-        >
+        <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
           <i class="bi bi-chevron-left"></i> Anterior
         </div>
-        <div
-          class="btn btn-outline-secondary"
-          mwlCalendarToday
-          [(viewDate)]="viewDate"
-        >
+        <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
           Hoy
         </div>
-        <div
-          class="btn btn-primary"
-          mwlCalendarNextView
-          [view]="view"
-          [(viewDate)]="viewDate"
-          (viewDateChange)="closeOpenMonthViewDay()"
-        >
+        <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
           Siguiente <i class="bi bi-chevron-right"></i>
         </div>
       </div>
     </div>
-
-    <!-- Título del Período Actual -->
     <div class="col-md-4">
       <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es' }}</h3>
     </div>
-
-    <!-- Selector de Vista (Mes, Semana, Día) -->
     <div class="col-md-4">
       <div class="btn-group">
-        <div
-          class="btn btn-primary"
-          (click)="setView(CalendarView.Month)"
-          [class.active]="view === CalendarView.Month"
-        >
-          Mes
-        </div>
-        <div
-          class="btn btn-primary"
-          (click)="setView(CalendarView.Week)"
-          [class.active]="view === CalendarView.Week"
-        >
-          Semana
-        </div>
-        <div
-          class="btn btn-primary"
-          (click)="setView(CalendarView.Day)"
-          [class.active]="view === CalendarView.Day"
-        >
-          Día
-        </div>
+        <div class="btn btn-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">Mes</div>
+        <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">Semana</div>
+        <div class="btn btn-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">Día</div>
       </div>
     </div>
   </div>
@@ -70,13 +30,11 @@
 
   <!-- Mensaje de Carga -->
   <div *ngIf="isLoading" class="loading-spinner">
-    <p>Cargando reservas...</p>
+    <p>Cargando calendario...</p>
   </div>
 
-  <!-- Contenedor del Calendario -->
+  <!-- Contenedor del Calendario (sin cambios estructurales) -->
   <div *ngIf="!isLoading" [ngSwitch]="view">
-    
-    <!-- Vista de Mes -->
     <mwl-calendar-month-view
       *ngSwitchCase="CalendarView.Month"
       [viewDate]="viewDate"
@@ -85,38 +43,30 @@
       [activeDayIsOpen]="activeDayIsOpen"
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clickeado', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-      locale="es"
-    >
+      locale="es">
     </mwl-calendar-month-view>
 
-    <!-- Vista de Semana -->
     <mwl-calendar-week-view
       *ngSwitchCase="CalendarView.Week"
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
       (eventClicked)="handleEvent('Clickeado', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
       [weekStartsOn]="1"
       locale="es"
       [dayStartHour]="6"
-      [dayEndHour]="22"
-    >
+      [dayEndHour]="22">
     </mwl-calendar-week-view>
 
-    <!-- Vista de Día -->
     <mwl-calendar-day-view
       *ngSwitchCase="CalendarView.Day"
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
       (eventClicked)="handleEvent('Clickeado', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
       locale="es"
       [dayStartHour]="6"  
-      [dayEndHour]="22"
-    >
+      [dayEndHour]="22">
     </mwl-calendar-day-view>
   </div>
 
@@ -126,23 +76,23 @@
   </div>
 </div>
 
-<!-- (Opcional) Template para un Modal de Detalles del Evento -->
-<!-- Puedes usar ng-bootstrap, Angular Material o tu propia implementación de modal -->
+<!-- Template para el Modal (Fallback) -->
 <ng-template #modalContent let-close="close">
   <div class="modal-header">
     <h5 class="modal-title">Detalles de la Reserva</h5>
     <button type="button" class="btn-close" (click)="close()"></button>
   </div>
-  <div class="modal-body" *ngIf="modalData">
-    <p><strong>Servicio:</strong> {{ modalData.event.title }}</p>
-    <p><strong>Inicio:</strong> {{ modalData.event.start | date:'full':'':'es' }}</p>
-    <p><strong>Fin:</strong> {{ modalData.event.end | date:'full':'':'es' }}</p>
-    <p><strong>Estado:</strong> {{ modalData.event.meta.reservation.status }}</p>
-    <p *ngIf="modalData.event?.meta.reservation.notes">
-      <strong>Notas:</strong> {{ modalData.event.meta.reservation.notes }}
+  <!-- CAMBIOS AQUÍ para reflejar el modelo 'booking' -->
+  <div class="modal-body" *ngIf="modalData?.event?.meta?.booking as booking">
+    <p><strong>Servicio:</strong> {{ booking.serviceName }}</p>
+    <p><strong>Inicio:</strong> {{ booking.startTime | date:'full':'':'es' }}</p>
+    <p><strong>Fin:</strong> {{ booking.endTime | date:'full':'':'es' }}</p>
+    <p><strong>Estado:</strong> {{ booking.status }}</p>
+    <p *ngIf="booking.notes">
+      <strong>Notas:</strong> {{ booking.notes }}
     </p>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="close()">Cerrar</button>
+    <button type-="button" class="btn btn-outline-secondary" (click)="close()">Cerrar</button>
   </div>
 </ng-template>

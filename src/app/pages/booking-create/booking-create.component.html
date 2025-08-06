@@ -1,0 +1,89 @@
+<div class="container booking-create-container">
+  <h2>Buscar y Reservar un Servicio</h2>
+  <p class="subtitle">Encuentra un horario disponible y confirma tu plaza.</p>
+
+  <!-- Paso 1: Formulario de Búsqueda -->
+  <div class="search-form-container card">
+    <div class="card-header">
+      <h4>1. Buscar Disponibilidad</h4>
+    </div>
+    <div class="card-body">
+      <div *ngIf="isLoadingServices" class="loading-spinner">Cargando servicios...</div>
+      
+      <form *ngIf="!isLoadingServices" [formGroup]="searchForm" (ngSubmit)="onSearchSlots()">
+        <div class="form-row">
+          <!-- Selector de Servicio -->
+          <div class="form-group">
+            <label for="service">Servicio</label>
+            <select id="service" class="form-control" formControlName="serviceUuid">
+              <option [ngValue]="null" disabled>-- Selecciona un servicio --</option>
+              <option *ngFor="let service of availableServices" [ngValue]="service.serviceUuid">
+                {{ service.name }} ({{ service.pricePerReservation | currency:'EUR' }})
+              </option>
+            </select>
+          </div>
+
+          <!-- Selector de Fecha -->
+          <div class="form-group">
+            <label for="date">¿Para qué día?</label>
+            <input type="date" id="date" class="form-control" formControlName="date">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="searchForm.invalid || isSearching">
+          <span *ngIf="isSearching" class="spinner-border spinner-border-sm"></span>
+          <span *ngIf="!isSearching">Buscar Horarios</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Paso 2: Resultados de la Búsqueda y Selección -->
+  <div *ngIf="!isSearching" class="results-container mt-4">
+    <h4 *ngIf="availableTimeSlots.length > 0">2. Selecciona un Horario</h4>
+    
+    <div *ngIf="availableTimeSlots.length === 0 && searchForm.touched" class="alert alert-info">
+      No se encontraron horarios disponibles para la fecha seleccionada. Por favor, intenta con otra fecha.
+    </div>
+
+    <div class="list-group">
+      <a *ngFor="let slot of availableTimeSlots"
+         href="javascript:void(0)"
+         class="list-group-item list-group-item-action"
+         [class.active]="selectedSlot?.timeSlotUuid === slot.timeSlotUuid"
+         (click)="selectSlot(slot)">
+        
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ slot.startTime | date:'shortTime' }} - {{ slot.endTime | date:'shortTime' }}</h5>
+          <small class="text-success">{{ slot.availableSlots }} plaza(s) disponible(s)</small>
+        </div>
+        <p class="mb-1"><strong>Precio:</strong> {{ slot.price | currency:'EUR' }}</p>
+      </a>
+    </div>
+  </div>
+  
+  <!-- Paso 3: Confirmación de la Reserva -->
+  <div *ngIf="selectedSlot" class="confirmation-container card mt-4">
+    <div class="card-header">
+      <h4>3. Confirmar Reserva</h4>
+    </div>
+    <div class="card-body">
+        <p><strong>Servicio:</strong> {{ selectedSlot.serviceName }}</p>
+        <p><strong>Fecha:</strong> {{ selectedSlot.startTime | date:'fullDate':'':'es' }}</p>
+        <p><strong>Horario:</strong> {{ selectedSlot.startTime | date:'shortTime' }} - {{ selectedSlot.endTime | date:'shortTime' }}</p>
+    </div>
+    <div class="card-footer">
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+      <button type="button" class="btn btn-primary" (click)="onConfirmBooking()" [disabled]="isSubmitting">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!isSubmitting">Confirmar Mi Plaza</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Botón para volver -->
+  <div class="form-actions mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Volver</button>
+  </div>
+</div>

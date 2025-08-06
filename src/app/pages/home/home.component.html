@@ -2,65 +2,54 @@
   <div class="home-header">
     <h1>Panel de Control</h1>
     <div>
-      <!-- Botón para ir a la futura vista de calendario -->
-      <button (click)="goToCalendarView()" class="btn btn-link">Vista Calendario</button>
       <button (click)="logout()" class="btn btn-link">Cerrar Sesión</button>
     </div>
   </div>
 
-  <p class="welcome-message">Hola, {{ userName }}</p>
+  <p class="welcome-message">Hola, {{ userName$ | async }}</p>
 
-  <button (click)="goToReservationCreation()" class="btn btn-secondary">Crear Nueva Reserva/Cita</button>
-
-  <div class="management-section">
-    <h3>Gestionar mi Negocio</h3>
+  <!-- SECCIÓN DEL PROVEEDOR (solo visible si es PROVIDER) -->
+  <div *ngIf="isProvider$ | async" class="management-section">
+    <h3>Panel de Proveedor</h3>
     <div class="management-links">
       <a routerLink="/my-services" class="btn btn-outline-primary">
         <i class="bi bi-tags-fill"></i> Gestionar mis Servicios
       </a>
-      <!-- Aquí podrías añadir más enlaces en el futuro, como "Ver mis Ganancias", etc. -->
+      <a routerLink="/provider/timeslots/new" class="btn btn-outline-primary">
+        <i class="bi bi-calendar-plus-fill"></i> Crear Horario Disponible
+      </a>
     </div>
   </div>
 
-  <!-- SECCIÓN DE PRÓXIMAS RESERVAS -->
-  <div class="reservations-section">
-    <h2>Próximas Reservas</h2>
-    <div *ngIf="isLoading" class="loading-spinner">Cargando...</div>
-    <div *ngIf="!isLoading && upcomingReservations.length > 0; else noUpcoming">
-      <div *ngFor="let res of upcomingReservations" class="reservation-card" [ngClass]="'status-' + res.status.toLowerCase()">
-        <div class="card-header">
-          <h3 class="service-name">{{ res.serviceName }}</h3>
-          <span class="status-badge">{{ res.status }}</span>
-        </div>
-        <div class="card-body">
-          <p><strong>Fecha:</strong> {{ res.startTime | date:'fullDate':'':'es' }}</p>
-          <p><strong>Hora:</strong> {{ res.startTime | date:'shortTime' }} - {{ res.endTime | date:'shortTime' }}</p>
-          <p *ngIf="res.price > 0"><strong>Precio:</strong> {{ res.price | currency:'EUR' }}</p>
-        </div>
-        <div class="card-footer">
-          <button (click)="navigateToReservationDetails(res.reservationUuid)" class="btn btn-link">Ver Detalles</button>
-          <button (click)="cancelReservation(res.reservationUuid)" class="btn btn-link-danger">Cancelar</button>
+  <!-- SECCIÓN DEL CLIENTE (solo visible si es CLIENT) -->
+  <div *ngIf="isClient$ | async" class="client-section">
+    <h3>Panel de Cliente</h3>
+    <div class="client-actions">
+        <button (click)="goToBookingCreation()" class="btn btn-secondary">Buscar y Reservar</button>
+        <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>
+    </div>
+
+    <!-- LISTA DE BOOKINGS (antes reservations) -->
+    <div class="bookings-section">
+      <h2>Próximas Reservas</h2>
+      <div *ngIf="isLoading" class="loading-spinner">Cargando...</div>
+      <div *ngIf="!isLoading && upcomingBookings.length > 0; else noUpcoming">
+        <div *ngFor="let booking of upcomingBookings" class="booking-card" [ngClass]="'status-' + booking.status.toLowerCase()">
+          <!-- ... estructura interna de la tarjeta (actualizar res por booking) ... -->
+          <div class="card-header">
+            <h3 class="service-name">{{ booking.serviceName }}</h3>
+            <span class="status-badge">{{ booking.status }}</span>
+          </div>
+          <div class="card-footer">
+            <button (click)="navigateToBookingDetails(booking.bookingUuid)" class="btn btn-link">Ver Detalles</button>
+            <button (click)="cancelBooking(booking.bookingUuid)" class="btn btn-link-danger">Cancelar</button>
+          </div>
         </div>
       </div>
+      <ng-template #noUpcoming>
+        <p class="placeholder-text" *ngIf="!isLoading">No tienes ninguna reserva próxima.</p>
+      </ng-template>
     </div>
-    <ng-template #noUpcoming>
-      <p class="placeholder-text" *ngIf="!isLoading">No tienes ninguna reserva próxima.</p>
-    </ng-template>
   </div>
 
-  <!-- SECCIÓN DE HISTORIAL -->
-  <div class="reservations-section">
-    <h2>Historial de Reservas</h2>
-    <div *ngIf="!isLoading && pastReservations.length > 0; else noPast">
-       <div *ngFor="let res of pastReservations" class="reservation-card simple-card" [ngClass]="'status-' + res.status.toLowerCase()">
-         <div class="card-body">
-           <span>{{ res.startTime | date:'shortDate' }} - {{ res.serviceName }}</span>
-           <span class="status-badge">{{ res.status }}</span>
-         </div>
-      </div>
-    </div>
-     <ng-template #noPast>
-      <p class="placeholder-text" *ngIf="!isLoading">No hay reservas en tu historial.</p>
-    </ng-template>
-  </div>
 </div>

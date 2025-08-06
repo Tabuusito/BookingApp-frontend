@@ -25,6 +25,7 @@
           <th>Nombre del Servicio</th>
           <th>Duración</th>
           <th>Precio</th>
+          <th>Capacidad</th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -37,6 +38,9 @@
           </td>
           <td>{{ service.defaultDurationSeconds / 60 }} min</td>
           <td>{{ service.pricePerReservation | currency:'EUR' }}</td>
+          <td>
+            <i class="bi bi-people-fill"></i> {{ service.capacity }}
+          </td>
           <td>
             <div class="form-check form-switch">
               <input 

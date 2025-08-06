@@ -1,0 +1,90 @@
+<div class="container timeslot-create-container">
+  <h2>Crear Nuevo Horario Disponible</h2>
+  <p class="subtitle">Define un nuevo slot en tu calendario para que los clientes puedan reservarlo.</p>
+
+  <div *ngIf="isLoadingServices" class="loading-spinner">Cargando tus servicios...</div>
+  
+  <div *ngIf="!isLoadingServices && providerServices.length === 0" class="alert alert-warning">
+    No tienes servicios activos. <a routerLink="/services/new">Crea un servicio</a> antes de añadir horarios.
+  </div>
+
+  <form *ngIf="!isLoadingServices && providerServices.length > 0" [formGroup]="timeSlotForm" (ngSubmit)="onSubmit()">
+
+    <!-- Selector de Servicio -->
+    <div class="form-group">
+      <label for="serviceUuid">¿Para qué servicio?</label>
+      <select id="serviceUuid" class="form-control" formControlName="serviceUuid">
+        <option [ngValue]="null" disabled>-- Selecciona uno de tus servicios --</option>
+        <option *ngFor="let service of providerServices" [ngValue]="service.serviceUuid">
+          {{ service.name }}
+        </option>
+      </select>
+      <div *ngIf="f['serviceUuid'].invalid && f['serviceUuid'].touched" class="error-message">
+        Debes seleccionar un servicio.
+      </div>
+    </div>
+
+    <!-- Selector de Fecha -->
+    <div class="form-group">
+      <label for="date">¿En qué fecha?</label>
+      <input type="date" id="date" class="form-control" formControlName="date">
+      <div *ngIf="f['date'].invalid && f['date'].touched" class="error-message">
+        La fecha es requerida.
+      </div>
+    </div>
+
+    <!-- Grupo de Horas -->
+    <div formGroupName="timeGroup" class="form-row">
+      <div class="form-group">
+        <label for="startTime">Hora de inicio</label>
+        <input type="time" id="startTime" class="form-control" formControlName="startTime">
+        <div *ngIf="timeGroup.get('startTime')?.invalid && timeGroup.get('startTime')?.touched" class="error-message">
+          La hora de inicio es requerida.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="endTime">Hora de fin</label>
+        <input type="time" id="endTime" class="form-control" formControlName="endTime">
+        <div *ngIf="timeGroup.get('endTime')?.invalid && timeGroup.get('endTime')?.touched" class="error-message">
+          La hora de fin es requerida.
+        </div>
+        <!-- Mensaje para el validador de grupo -->
+        <div *ngIf="timeGroup.hasError('endTimeNotAfterStart') && timeGroup.get('endTime')?.touched" class="error-message">
+          La hora de fin debe ser posterior a la de inicio.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Opcional: Anular Capacidad y Precio -->
+    <p class="text-muted small">Opcional: puedes especificar una capacidad y precio diferentes a los del servicio para este horario concreto.</p>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="capacity">Capacidad (plazas)</label>
+            <input type="number" id="capacity" class="form-control" formControlName="capacity" placeholder="Heredado del servicio">
+             <div *ngIf="f['capacity']?.invalid && f['capacity']?.touched" class="error-message">
+                La capacidad debe ser al menos 1.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="price">Precio (€)</label>
+            <input type="number" id="price" class="form-control" formControlName="price" placeholder="Heredado del servicio">
+             <div *ngIf="f['price']?.invalid && f['price']?.touched" class="error-message">
+                El precio no puede ser negativo.
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes de Estado y Botones -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="timeSlotForm.invalid || isSubmitting">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!isSubmitting">Añadir Horario</span>
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { OfferedServiceService } from '../../services/offered-service.service';
 import { CreateOfferedServiceRequest } from '../../models/offered-service.models';
-import { FormErrorService } from '../../services/form-error.service';
+import { FormErrorService } from '../../services/form-error.service'; // Asegúrate de importar el servicio
 
 @Component({
   selector: 'app-service-create',
@@ -19,8 +19,6 @@ export class ServiceCreateComponent implements OnInit {
   serviceForm!: FormGroup;
   isSubmitting = false;
   errorMessage = '';
-  
-  // Para manejar la redirección de vuelta
   private returnUrl: string | null = null;
 
   constructor(
@@ -28,13 +26,13 @@ export class ServiceCreateComponent implements OnInit {
     private offeredServiceService: OfferedServiceService,
     private router: Router,
     private location: Location,
-    private route: ActivatedRoute, // Para leer parámetros de la URL
-    private formErrorService: FormErrorService
+    private route: ActivatedRoute,
+    // --- CAMBIO CLAVE: Hacer el servicio público ---
+    public formErrorService: FormErrorService 
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-    // Comprueba si venimos del formulario de creación de reserva
     this.route.queryParamMap.subscribe(params => {
         this.returnUrl = params.get('returnTo');
     });
@@ -42,44 +40,18 @@ export class ServiceCreateComponent implements OnInit {
 
   private initForm(): void {
     this.serviceForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       description: [''],
-      // Pedimos la duración en minutos al usuario para que sea más fácil
       durationMinutes: [30, [Validators.required, Validators.min(1)]],
       pricePerReservation: [0, [Validators.required, Validators.min(0)]],
+      // --- AÑADIR capacity AL FORMULARIO ---
+      capacity: [1, [Validators.required, Validators.min(1)]], 
       isActive: [true, Validators.required],
     });
   }
 
-  public getErrorMessage(controlName: string): string | null {
-    const control = this.serviceForm.get(controlName);
-
-    // No mostrar error si el control es válido o no ha sido tocado
-    if (!control || !control.invalid || !(control.touched || control.dirty)) {
-      return null;
-    }
-
-    const errors = control.errors;
-    if (errors) {
-      if (errors['required']) {
-        return 'Este campo es requerido.';
-      }
-      if (errors['minlength']) {
-        const requiredLength = errors['minlength'].requiredLength;
-        return `Debe tener al menos ${requiredLength} caracteres.`;
-      }
-      if (errors['min']) {
-        const minValue = errors['min'].min;
-        return `El valor debe ser al menos ${minValue}.`;
-      }
-      if (errors['serverError']) {
-        return errors['serverError'];
-      }
-    }
-
-    return 'El valor ingresado es inválido.';
-  }
-
+  // --- ELIMINADO: La función getErrorMessage() ya no es necesaria aquí ---
+  
   onSubmit(): void {
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
@@ -94,21 +66,19 @@ export class ServiceCreateComponent implements OnInit {
     const request: CreateOfferedServiceRequest = {
       name: formValue.name,
       description: formValue.description,
-      // Convertimos los minutos a segundos para la API
       defaultDurationSeconds: formValue.durationMinutes * 60,
       pricePerReservation: formValue.pricePerReservation,
+      capacity: formValue.capacity, // <-- AÑADIR capacity a la petición
       isActive: formValue.isActive,
     };
 
     this.offeredServiceService.createService(request).subscribe({
       next: (newService) => {
         alert('¡Servicio creado con éxito!');
-        // Si hay una URL de retorno, vamos allí. Si no, a la página principal.
         if (this.returnUrl) {
           this.router.navigateByUrl(this.returnUrl);
         } else {
-          // Idealmente, aquí irías a una página de "gestión de servicios"
-          this.router.navigate(['/home']); 
+          this.router.navigate(['/my-services']); 
         }
       },
       error: (err: HttpErrorResponse) => {

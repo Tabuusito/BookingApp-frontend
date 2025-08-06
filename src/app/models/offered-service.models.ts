@@ -4,6 +4,7 @@ export interface OfferedService {
   name: string;
   description: string | null;
   pricePerReservation: number;
+  capacity: number;
   active: boolean;
   defaultDurationSeconds: number;
 }
@@ -13,6 +14,7 @@ export interface CreateOfferedServiceRequest {
   description?: string;
   defaultDurationSeconds: number;
   pricePerReservation: number;
+  capacity: number;
   isActive: boolean;
 }
 
@@ -21,5 +23,6 @@ export interface UpdateOfferedServiceRequest {
   description?: string;
   defaultDurationSeconds?: number;
   pricePerReservation?: number;
+  capacity?: number;
   isActive?: boolean;
 }

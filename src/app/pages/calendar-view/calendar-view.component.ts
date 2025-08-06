@@ -1,24 +1,25 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, TemplateRef, LOCALE_ID } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
-import { RouterLink } from '@angular/router'; // <-- Importar RouterLink
+import { Router, RouterLink } from '@angular/router';
 import localeEs from '@angular/common/locales/es';
+import { Subject } from 'rxjs';
 
 // Librerías de angular-calendar
 import { CalendarEvent, CalendarView, CalendarEventTimesChangedEvent, CalendarModule } from 'angular-calendar';
-import { Subject } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap'; // <-- Asumimos que usarás ng-bootstrap para modales
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Recursos locales
 import { colors } from './colors';
-import { ReservationService } from '../../services/reservation.service';
-import { ReservationResponseDTO } from '../../models/reservation.models';
+// --- IMPORTS ACTUALIZADOS ---
+import { BookingService } from '../../services/booking.service';
+import { BookingResponseDTO } from '../../models/booking.models';
+import { AuthService } from '../../auth/auth.service';
 
-registerLocaleData(localeEs); // Registrar el idioma para los pipes del calendario
+registerLocaleData(localeEs, 'es');
 
 @Component({
   selector: 'app-calendar-view',
   standalone: true,
-  // La estrategia OnPush es recomendada para el calendario por rendimiento
   changeDetection: ChangeDetectionStrategy.OnPush, 
   imports: [
     CommonModule,
@@ -27,25 +28,21 @@ registerLocaleData(localeEs); // Registrar el idioma para los pipes del calendar
   ],
   templateUrl: './calendar-view.component.html',
   styleUrls: ['./calendar-view.component.scss'],
+  providers: [{ provide: LOCALE_ID, useValue: 'es' }] // Establecer español para los pipes
 })
 export class CalendarViewComponent implements OnInit {
 
   // --- PROPIEDADES BÁSICAS DEL CALENDARIO ---
-  view: CalendarView = CalendarView.Month;
-  CalendarView = CalendarView; // Expone el enum a la plantilla
+  view: CalendarView = CalendarView.Week; // Empezamos en vista de semana, más útil
+  CalendarView = CalendarView;
   viewDate: Date = new Date();
   events: CalendarEvent[] = [];
   isLoading = true;
 
   // --- PROPIEDADES PARA INTERACTIVIDAD ---
-  
-  // Para forzar la actualización del calendario
   refresh = new Subject<void>(); 
-
-  // Para gestionar la vista de "día abierto" en la vista de mes
   activeDayIsOpen: boolean = false; 
 
-  // Para el contenido del modal
   @ViewChild('modalContent', { static: true }) modalContent?: TemplateRef<any>;
   modalData?: {
     action: string;
@@ -53,60 +50,80 @@ export class CalendarViewComponent implements OnInit {
   };
   
   constructor(
-    private reservationService: ReservationService,
-    private modal: NgbModal // <-- Inyectar el servicio de modales
+    private bookingService: BookingService, // <-- CAMBIO: Inyectar BookingService
+    private authService: AuthService, // Para saber si es cliente o proveedor
+    private modal: NgbModal,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadAndMapReservations();
+    // La carga de datos ahora depende del rol del usuario.
+    // Por ahora, asumimos que el calendario muestra los bookings de un CLIENTE.
+    // Si un proveedor viera su calendario, debería mostrar sus TimeSlots.
+    this.authService.isClient().subscribe(isClient => {
+      if (isClient) {
+        this.loadClientBookings();
+      } else {
+        // Lógica futura para proveedores: this.loadProviderTimeSlots();
+        this.isLoading = false;
+      }
+    });
   }
 
   // --- MÉTODOS DE OBTENCIÓN Y MAPEO DE DATOS ---
 
-  loadAndMapReservations(): void {
+  loadClientBookings(): void {
     this.isLoading = true;
-    this.reservationService.getMyReservations().subscribe(reservations => {
-      this.events = reservations.map((res: ReservationResponseDTO): CalendarEvent => {
-        let eventColor = colors['blue']; // Color por defecto
-        if (res.status === 'CONFIRMED') eventColor = colors['green'];
-        if (res.status === 'PENDING') eventColor = colors['yellow'];
-        if (res.status === 'CANCELLED') eventColor = colors['red'];
+    this.bookingService.getMyBookings().subscribe({ // <-- CAMBIO: Llamar al nuevo servicio
+      next: (bookings) => {
+        this.events = bookings.map((booking: BookingResponseDTO): CalendarEvent => {
+          let eventColor = colors['blue'];
+          if (booking.status === 'CONFIRMED') eventColor = colors['green'];
+          if (booking.status.startsWith('CANCELLED')) eventColor = colors['red'];
+          if (booking.status === 'AWAITING_CONFIRMATION') eventColor = colors['yellow'];
 
-        return {
-          start: new Date(res.startTime),
-          end: new Date(res.endTime),
-          title: `${res.serviceName} (${res.ownerUsername})`, // Título más descriptivo
-          color: { ...eventColor },
-          allDay: false, // Las reservas suelen tener hora de inicio y fin
-          resizable: {
-            beforeStart: false, // Deshabilitar redimensionamiento por ahora
-            afterEnd: false,
-          },
-          draggable: false, // Deshabilitar arrastrar y soltar por ahora
-          meta: {
-            reservation: res, // Guardamos el objeto original
-          },
-        };
-      });
-      this.isLoading = false;
-      this.refresh.next(); // Notifica al calendario que los eventos han cambiado
+          return {
+            start: new Date(booking.startTime),
+            end: new Date(booking.endTime),
+            title: `${booking.serviceName}`, // Título simplificado, el cliente ya sabe que es suyo
+            color: { ...eventColor },
+            allDay: false,
+            resizable: { beforeStart: false, afterEnd: false },
+            draggable: false,
+            // Guardamos el objeto booking original en la metadata del evento
+            meta: {
+              booking: booking,
+            },
+          };
+        });
+        this.isLoading = false;
+        this.refresh.next();
+      },
+      error: (err) => {
+        console.error("Error al cargar los bookings para el calendario", err);
+        this.isLoading = false;
+      }
     });
   }
 
-  // --- MÉTODOS DE MANEJO DE EVENTOS DEL CALENDARIO ---
+  // --- MÉTODOS DE MANEJO DE EVENTOS DEL CALENDARIO (sin cambios estructurales) ---
 
   setView(view: CalendarView) {
     this.view = view;
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    if (events.length === 0) {
-      this.activeDayIsOpen = false;
-      return;
+    if (this.view === CalendarView.Month) {
+      if (events.length === 0) {
+        this.activeDayIsOpen = false;
+      } else {
+        this.activeDayIsOpen = !this.activeDayIsOpen;
+        this.viewDate = date;
+      }
+    } else if (this.view === CalendarView.Week) {
+        this.viewDate = date;
+        this.view = CalendarView.Day;
     }
-    // Si ya está abierto, lo cerramos. Si no, lo abrimos.
-    this.activeDayIsOpen = !this.activeDayIsOpen;
-    this.viewDate = date;
   }
 
   closeOpenMonthViewDay() {
@@ -114,19 +131,15 @@ export class CalendarViewComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    if (this.modalContent) {
-      this.modal.open(this.modalContent, { size: 'lg' });
+    // Redirigimos al detalle del booking al hacer clic en un evento
+    if (event.meta?.booking?.bookingUuid) {
+      this.router.navigate(['/bookings/detail', event.meta.booking.bookingUuid]);
+    } else {
+        // Fallback a un modal si no se puede redirigir
+        this.modalData = { event, action };
+        if (this.modalContent) {
+          this.modal.open(this.modalContent, { size: 'lg' });
+        }
     }
-  }
-
-  // Placeholder para futuras funcionalidades de arrastrar/redimensionar
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
-    // Aquí iría la lógica para actualizar la reserva en el backend
-    console.log('Evento movido o redimensionado', { event, newStart, newEnd });
   }
 }

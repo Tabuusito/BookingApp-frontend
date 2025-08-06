@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReservationCreateComponent } from './reservation-create.component';
+import { ReservationCreateComponent } from './booking-create.component';
 
 describe('ReservationCreateComponent', () => {
   let component: ReservationCreateComponent;

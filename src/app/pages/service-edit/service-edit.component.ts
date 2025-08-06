@@ -3,16 +3,18 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { OfferedServiceService } from '../../services/offered-service.service';
 import { UpdateOfferedServiceRequest } from '../../models/offered-service.models';
+import { FormErrorService } from '../../services/form-error.service'; // Asegúrate de que está importado
 
 @Component({
   selector: 'app-service-edit',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './service-edit.component.html', // Reutiliza la plantilla o una muy similar
-  styleUrls: ['../service-create/service-create.component.scss'] // Reutiliza los estilos
+  templateUrl: './service-edit.component.html',
+  styleUrls: ['../service-create/service-create.component.scss'] // Reutiliza los mismos estilos
 })
 export class ServiceEditComponent implements OnInit {
   serviceForm!: FormGroup;
@@ -26,7 +28,9 @@ export class ServiceEditComponent implements OnInit {
     private offeredServiceService: OfferedServiceService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    // --- CAMBIO CLAVE: Hacer el servicio público para usarlo en el template ---
+    public formErrorService: FormErrorService 
   ) {}
 
   ngOnInit(): void {
@@ -37,10 +41,12 @@ export class ServiceEditComponent implements OnInit {
   private initForm(): void {
     // La estructura del formulario es idéntica a la de creación
     this.serviceForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       description: [''],
       durationMinutes: [30, [Validators.required, Validators.min(1)]],
       pricePerReservation: [0, [Validators.required, Validators.min(0)]],
+      // --- AÑADIR capacity AL FORMULARIO ---
+      capacity: [1, [Validators.required, Validators.min(1)]],
       isActive: [true, Validators.required],
     });
   }
@@ -50,7 +56,7 @@ export class ServiceEditComponent implements OnInit {
       switchMap(params => {
         const uuid = params.get('serviceUuid');
         if (!uuid) {
-          this.router.navigate(['/my-services']); // Redirige si no hay ID
+          this.router.navigate(['/my-services']);
           throw new Error('No service UUID provided');
         }
         this.serviceUuid = uuid;
@@ -58,12 +64,13 @@ export class ServiceEditComponent implements OnInit {
       })
     ).subscribe({
       next: (service) => {
-        // Rellena el formulario con los datos del servicio
+        // Rellena el formulario con los datos del servicio, incluyendo la capacidad
         this.serviceForm.patchValue({
           name: service.name,
           description: service.description,
           durationMinutes: service.defaultDurationSeconds / 60,
           pricePerReservation: service.pricePerReservation,
+          capacity: service.capacity, // <-- RELLENAR capacity
           isActive: service.active
         });
         this.isLoading = false;
@@ -76,37 +83,12 @@ export class ServiceEditComponent implements OnInit {
     });
   }
 
-  public getErrorMessage(controlName: string): string | null {
-    const control = this.serviceForm.get(controlName);
-
-    // No mostrar error si el control es válido o no ha sido tocado
-    if (!control || !control.invalid || !(control.touched || control.dirty)) {
-      return null;
-    }
-
-    const errors = control.errors;
-    if (errors) {
-      if (errors['required']) {
-        return 'Este campo es requerido.';
-      }
-      if (errors['minlength']) {
-        const requiredLength = errors['minlength'].requiredLength;
-        return `Debe tener al menos ${requiredLength} caracteres.`;
-      }
-      if (errors['min']) {
-        const minValue = errors['min'].min;
-        return `El valor debe ser al menos ${minValue}.`;
-      }
-      if (errors['serverError']) {
-        return errors['serverError'];
-      }
-    }
-
-    return 'El valor ingresado es inválido.';
-  }
+  // --- ELIMINADO: La función getErrorMessage() ya no es necesaria aquí ---
+  // public getErrorMessage(controlName: string): string | null { ... }
 
   onSubmit(): void {
     if (this.serviceForm.invalid || !this.serviceUuid) {
+      this.serviceForm.markAllAsTouched();
       return;
     }
 
@@ -119,6 +101,7 @@ export class ServiceEditComponent implements OnInit {
       description: formValue.description,
       defaultDurationSeconds: formValue.durationMinutes * 60,
       pricePerReservation: formValue.pricePerReservation,
+      capacity: formValue.capacity, // <-- AÑADIR capacity a la petición de actualización
       isActive: formValue.isActive,
     };
 
@@ -127,8 +110,9 @@ export class ServiceEditComponent implements OnInit {
         alert('¡Servicio actualizado con éxito!');
         this.router.navigate(['/my-services']);
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Ocurrió un error al actualizar el servicio.';
+      error: (err: HttpErrorResponse) => {
+        // Usamos el servicio centralizado para manejar el error
+        this.errorMessage = this.formErrorService.handleServerValidationErrors(err, this.serviceForm);
         this.isSubmitting = false;
       }
     });

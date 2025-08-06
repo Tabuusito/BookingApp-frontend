@@ -1,15 +1,17 @@
 <div class="container service-create-container">
+  <!-- CAMBIO: Título -->
   <h2>Editar Servicio</h2>
-  <p class="subtitle">Define los detalles del servicio que quieres ofrecer.</p>
+  <p class="subtitle">Actualiza los detalles del servicio que ofreces.</p>
 
+  <!-- El resto del formulario es idéntico al de creación -->
   <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
 
     <!-- Nombre del Servicio -->
     <div class="form-group">
       <label for="name">Nombre del Servicio</label>
       <input type="text" id="name" class="form-control" formControlName="name">
-      <div *ngIf="getErrorMessage('name')" class="error-message">
-        {{ getErrorMessage('name') }}
+      <div *ngIf="formErrorService.getErrorMessage(serviceForm, 'name')" class="error-message">
+        {{ formErrorService.getErrorMessage(serviceForm, 'name') }}
       </div>
     </div>
 
@@ -19,23 +21,27 @@
       <textarea id="description" class="form-control" formControlName="description" rows="4"></textarea>
     </div>
 
-    <!-- Fila para Duración y Precio -->
+    <!-- Fila para Duración, Precio y CAPACIDAD -->
     <div class="form-row">
-      <!-- Duración en Minutos -->
       <div class="form-group">
-        <label for="duration">Duración (en minutos)</label>
+        <label for="duration">Duración (minutos)</label>
         <input type="number" id="duration" class="form-control" formControlName="durationMinutes">
-        <div *ngIf="getErrorMessage('durationMinutes')" class="error-message">
-          {{ getErrorMessage('durationMinutes') }}
+        <div *ngIf="formErrorService.getErrorMessage(serviceForm, 'durationMinutes')" class="error-message">
+          {{ formErrorService.getErrorMessage(serviceForm, 'durationMinutes') }}
         </div>
       </div>
-
-      <!-- Precio por Reserva -->
       <div class="form-group">
         <label for="price">Precio por Reserva (€)</label>
         <input type="number" id="price" class="form-control" formControlName="pricePerReservation">
-        <div *ngIf="getErrorMessage('pricePerReservation')" class="error-message">
-          {{ getErrorMessage('pricePerReservation') }}
+        <div *ngIf="formErrorService.getErrorMessage(serviceForm, 'pricePerReservation')" class="error-message">
+          {{ formErrorService.getErrorMessage(serviceForm, 'pricePerReservation') }}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="capacity">Capacidad (plazas)</label>
+        <input type="number" id="capacity" class="form-control" formControlName="capacity">
+        <div *ngIf="formErrorService.getErrorMessage(serviceForm, 'capacity')" class="error-message">
+          {{ formErrorService.getErrorMessage(serviceForm, 'capacity') }}
         </div>
       </div>
     </div>
@@ -43,8 +49,8 @@
     <!-- Checkbox para Activar Servicio -->
     <div class="form-check">
       <input type="checkbox" id="isActive" class="form-check-input" formControlName="isActive">
-      <label for="isActive" class="form-check-label">Activar este servicio inmediatamente</label>
-      <small class="form-text text-muted">Si está activo, otros usuarios podrán reservarlo.</small>
+      <label for="isActive" class="form-check-label">Servicio Activo</label>
+      <small class="form-text text-muted">Los clientes solo pueden reservar servicios activos.</small>
     </div>
 
     <!-- Mensajes de Estado y Botones -->
@@ -56,6 +62,7 @@
       <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="serviceForm.invalid || isSubmitting">
         <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+        <!-- CAMBIO: Texto del botón -->
         <span *ngIf="!isSubmitting">Guardar Cambios</span>
       </button>
     </div>
