@@ -24,12 +24,12 @@
   <!-- SECCIÓN DEL CLIENTE (solo visible si es CLIENT) -->
   <div *ngIf="isClient$ | async" class="client-section">
     <h3>Panel de Cliente</h3>
-    <div class="client-actions">
+    <div class="client-actions d-flex gap-2">
     <a routerLink="/explore" class="btn btn-primary">
         <i class="bi bi-search"></i> Explorar y Reservar Servicios
     </a>
-    <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>        <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>
-    </div>
+    <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>        
+  </div>
 
     <!-- LISTA DE BOOKINGS (antes reservations) -->
     <div class="bookings-section">
