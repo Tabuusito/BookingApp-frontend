@@ -25,8 +25,10 @@
   <div *ngIf="isClient$ | async" class="client-section">
     <h3>Panel de Cliente</h3>
     <div class="client-actions">
-        <button (click)="goToBookingCreation()" class="btn btn-secondary">Buscar y Reservar</button>
-        <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>
+    <a routerLink="/explore" class="btn btn-primary">
+        <i class="bi bi-search"></i> Explorar y Reservar Servicios
+    </a>
+    <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>        <button (click)="goToCalendarView()" class="btn btn-secondary">Mi Calendario</button>
     </div>
 
     <!-- LISTA DE BOOKINGS (antes reservations) -->

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // IMPORTS ACTUALIZADOS
 import { OfferedService } from '../../models/offered-service.models';
@@ -35,12 +35,23 @@ export class BookingCreateComponent implements OnInit {
     private timeSlotService: TimeSlotService,
     private bookingService: BookingService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.loadServices();
+
+    this.route.queryParamMap.subscribe(params => {
+      const serviceUuid = params.get('serviceUuid');
+      if (serviceUuid) {
+        // Pre-selecciona el servicio en el formulario
+        this.searchForm.get('serviceUuid')?.setValue(serviceUuid);
+        // Opcional: puedes disparar la búsqueda de slots automáticamente
+        this.onSearchSlots();
+      }
+    });
   }
 
   private initForm(): void {

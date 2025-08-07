@@ -1,0 +1,30 @@
+<div class="container profile-container">
+    <!-- Podrías mostrar info del proveedor aquí -->
+    <h2>Servicios Ofrecidos</h2>
+    <div *ngIf="(isLoading$ | async)" class="loading-spinner">Cargando servicios...</div>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div *ngIf="isLoading$ && (services$ | async) as services">
+        <div *ngIf="services.length > 0; else noServices">
+            <div *ngFor="let service of services" class="card service-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.name }}</h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Duración: {{ service.defaultDurationSeconds / 60 }} min</li>
+                        <li class="list-group-item">Precio: {{ service.pricePerReservation | currency:'EUR' }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <button (click)="goToBooking(service.serviceUuid)" class="btn btn-primary">Ver Horarios y Reservar</button>
+                </div>
+            </div>
+        </div>
+        <ng-template #noServices>
+            <p>Este proveedor no tiene servicios activos en este momento.</p>
+        </ng-template>
+    </div>
+    <div class="back-link mt-4">
+      <a routerLink="/explore"><i class="bi bi-arrow-left-circle"></i> Volver a la búsqueda</a>
+    </div>
+</div>

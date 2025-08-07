@@ -16,6 +16,8 @@ import { TimeSlotCreateComponent } from './pages/timeslot-create/timeslot-create
 // --- GUARDIAS ---
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
+import { ProviderProfileComponent } from './pages/provider-profile/provider-profile.component';
+import { ExploreProvidersComponent } from './pages/explore-providers/explore-providers.component';
 
 export const routes: Routes = [
   // Rutas públicas
@@ -59,6 +61,16 @@ export const routes: Routes = [
     path: 'provider/timeslots/new', 
     component: TimeSlotCreateComponent, 
     canActivate: [authGuard, roleGuard(['PROVIDER'])] 
+  },
+  {
+    path: 'explore', 
+    component: ExploreProvidersComponent, 
+    canActivate: [authGuard] 
+  },
+  { 
+    path: 'providers/:providerUuid', 
+    component: ProviderProfileComponent, 
+    canActivate: [authGuard] 
   },
 
   // Redirecciones por defecto

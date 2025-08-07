@@ -1,0 +1,27 @@
+<div class="container explore-container">
+  <h1>Explorar Proveedores</h1>
+  <p>Busca profesionales y academias para encontrar el servicio que necesitas.</p>
+
+  <div class="search-bar">
+    <input type="text" [formControl]="searchControl" placeholder="Buscar por nombre..." class="form-control">
+  </div>
+  
+  <div *ngIf="isLoading" class="loading-spinner mt-4">Buscando...</div>
+  <div *ngIf="error" class="alert alert-danger mt-4">{{ error }}</div>
+
+  <div class="provider-list mt-4">
+    <div *ngFor="let provider of (providers$ | async)" class="card provider-card" (click)="viewProviderProfile(provider.uuid)">
+      <div class="card-body">
+        <h5 class="card-title">{{ provider.username }}</h5>
+        <!-- <p class="card-text">{{ provider.description }}</p> -->
+        <a [routerLink]="['/providers', provider.uuid]" class="stretched-link">Ver servicios</a>
+      </div>
+    </div>
+    <div *ngIf="!(providers$ | async)?.length && !isLoading" class="text-center mt-4">
+      <p>No se encontraron proveedores. Intenta con otra búsqueda.</p>
+    </div>
+  </div>
+   <div class="back-link mt-4">
+     <a routerLink="/home"><i class="bi bi-arrow-left-circle"></i> Volver al Panel de Control</a>
+   </div>
+</div>
